@@ -1,0 +1,28 @@
+@URL = http://localhost:8000
+
+###
+# GET /users/{user_id}
+GET {{URL}}/users/1
+
+###
+# GET /users
+GET {{URL}}/users
+
+###
+# POST /users
+POST {{URL}}/users
+Content-Type: application/json
+
+{
+    "name": "John",
+    "email": "john.doe@example.com"
+}
+
+###
+# PATCH /users/{user_id}
+PATCH {{URL}}/users/1
+Content-Type: application/json
+
+{
+    "name": "John Doe"
+}
