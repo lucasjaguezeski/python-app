@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from contextlib import asynccontextmanager
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.Database import db, db_session_context
 from app.core.MongoDB import mongo_db
 from app.controllers.UserController import router as user_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -16,10 +17,12 @@ async def lifespan(app: FastAPI):
     await mongo_db.disconnect()
     await db.disconnect()
 
+
 app = FastAPI(lifespan=lifespan)
 
+
 class DBSessionMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next) -> Response:
         # 1. Abre uma nova "conexão" para esta Request inteira
         session = db.session_factory()
         # 2. Guarda ela no "Thread Local" do ContextVar
@@ -35,6 +38,7 @@ class DBSessionMiddleware(BaseHTTPMiddleware):
             # 4. De maneira garantida, fechamos a sessão da Request para voltar ao pool
             await session.close()
             db_session_context.reset(token)
+
 
 # Adiciona o Middleware Automático
 app.add_middleware(DBSessionMiddleware)

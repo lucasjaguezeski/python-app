@@ -1,31 +1,29 @@
 from fastapi import HTTPException
-from warnings import _deprecated
+from collections.abc import Sequence
 
 from app.repositories.UserRepository import UserRepository
 from app.models.User import User
 from app.dtos.UserDtos import UserCreateUpdateDto
+from app.utils.DtoUtil import patch
+
 
 class UserService:
-
     def __init__(self):
         self.repo = UserRepository()
 
-    async def find_by_id(self, user_id: int):
+    async def find_by_id(self, user_id: int) -> User | None:
         return await self.repo.find_by_id(user_id)
 
-    async def list_users(self):
+    async def list_users(self) -> Sequence[User]:
         return await self.repo.find_all()
 
-    async def create_user(self, dto: UserCreateUpdateDto):
+    async def create_user(self, dto: UserCreateUpdateDto) -> User:
         user = User(name=dto.name, email=dto.email)
         return await self.repo.save(user)
 
-    async def update_user(self, user_id: int, dto: UserCreateUpdateDto):
+    async def update_user(self, user_id: int, dto: UserCreateUpdateDto) -> User:
         user = await self.repo.find_by_id(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        user.name = dto.name if dto.name else user.name
-        user.email = dto.email if dto.email else user.email
-        user.active = dto.active if dto.active is not None else user.active
+        user = patch(user, dto)
         return await self.repo.save(user)
-        

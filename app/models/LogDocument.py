@@ -4,12 +4,14 @@ from beanie import Document
 from pydantic import Field
 from enum import Enum
 
+
 class LogLevel(str, Enum):
     INFO = "INFO"
     WARNING = "WARNING"
     ERROR = "ERROR"
     DEBUG = "DEBUG"
     CRITICAL = "CRITICAL"
+
 
 class LogDocument(Document):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -23,8 +25,4 @@ class LogDocument(Document):
 
     class Settings:
         name = "app_logs"
-        indexes = [
-            "timestamp",
-            "level",
-            "endpoint"
-        ]
+        indexes = ["timestamp", "level", "endpoint"]
