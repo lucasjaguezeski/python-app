@@ -14,6 +14,10 @@ class UserRepository:
         result = await self.db.execute(select(User).filter(User.id == user_id))
         return result.scalars().first()
 
+    async def find_by_email(self, email: str) -> User | None:
+        result = await self.db.execute(select(User).filter(User.email == email))
+        return result.scalars().first()
+
     async def find_all(self) -> Sequence[User]:
         result = await self.db.execute(select(User))
         return result.scalars().all()

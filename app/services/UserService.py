@@ -4,7 +4,10 @@ from app.repositories.UserRepository import UserRepository
 from app.models.User import User
 from app.dtos.UserDtos import UserCreateDto, UserUpdateDto
 from app.utils.DtoUtil import patch
-from app.exceptions.UserNotFoundException import UserNotFoundException
+from app.exceptions.UserExceptions import (
+    UserNotFoundException,
+    UserEmailConflictException,
+)
 
 
 class UserService:
@@ -21,6 +24,9 @@ class UserService:
         return await self.repo.find_all()
 
     async def create_user(self, dto: UserCreateDto) -> User:
+        existing_user = await self.repo.find_by_email(dto.email)
+        if existing_user:
+            raise UserEmailConflictException(dto.email)
         user = User(name=dto.name, email=dto.email)
         return await self.repo.save(user)
 

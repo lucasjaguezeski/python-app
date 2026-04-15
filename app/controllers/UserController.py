@@ -28,6 +28,8 @@ class UserController:
     async def create_user(self, dto: UserCreateDto) -> User:
         try:
             return await self.service.create_user(dto)
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
 
