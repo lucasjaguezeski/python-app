@@ -2,9 +2,9 @@ name: Security Audit
 
 on:
   push:
-    branches: [ "main", "release", "develop" ]
+    branches: [ "master", "release", "develop" ]
   pull_request:
-    branches: [ "main", "release", "develop" ]
+    branches: [ "master", "release", "develop" ]
 
 jobs:
   audit:
