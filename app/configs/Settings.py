@@ -1,5 +1,12 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
+from enum import Enum
+
+
+class DDLAutoOption(str, Enum):
+    UPDATE = "update"
+    CREATE = "create"
+    NONE = "none"
 
 
 class Settings(BaseSettings):
@@ -14,7 +21,7 @@ class Settings(BaseSettings):
     DB_MAX_OVERFLOW: int = 20
     DB_ECHO: bool = False
     DB_POOL_PRE_PING: bool = True
-    DDL_AUTO_CREATE: bool = False
+    ALEMBIC_DDL_AUTO: DDLAutoOption = DDLAutoOption.NONE
 
     MONGODB_URL: str
     MONGO_DB_NAME: str

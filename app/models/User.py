@@ -1,11 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from app.core.Database import Base
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String
+from app.configs.Database import Base
 
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
-    active = Column(Boolean, default=True, nullable=False)
-    name = Column(String(50), nullable=True)
-    email = Column(String(100), unique=True, index=True, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, init=False)
+    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    name: Mapped[str | None] = mapped_column(String(50), default=None, nullable=True)

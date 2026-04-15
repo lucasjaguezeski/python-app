@@ -1,43 +1,41 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi_utils.inferring_router import InferringRouter
+from fastapi_utils.cbv import cbv
+from fastapi import HTTPException, status, Depends
 from typing import List, Sequence
 
-from app.dtos.UserDtos import UserCreateUpdateDto, UserResponseDto
+from app.dtos.UserDtos import UserCreateDto, UserUpdateDto, UserResponseDto
 from app.services.UserService import UserService
 from app.models.User import User
 
-# Criação do roteador para este controller
-router = APIRouter(prefix="/users", tags=["Users"])
-
-# Service sendo instanciado globalmente
-user_service = UserService()
+router = InferringRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/{user_id}", response_model=UserResponseDto)
-async def get_user(user_id: int) -> User:
-    user = await user_service.find_by_id(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+@cbv(router)
+class UserController:
+    service: UserService = Depends()
 
+    @router.get("/{user_id}", response_model=UserResponseDto)
+    async def get_user(self, user_id: int) -> User:
+        return await self.service.find_by_id(user_id)
 
-@router.get("/", response_model=List[UserResponseDto])
-async def list_users() -> Sequence[User]:
-    return await user_service.list_users()
+    @router.get("/", response_model=List[UserResponseDto])
+    async def list_users(self) -> Sequence[User]:
+        return await self.service.list_users()
 
+    @router.post(
+        "/", response_model=UserResponseDto, status_code=status.HTTP_201_CREATED
+    )
+    async def create_user(self, dto: UserCreateDto) -> User:
+        try:
+            return await self.service.create_user(dto)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/", response_model=UserResponseDto, status_code=status.HTTP_201_CREATED)
-async def create_user(dto: UserCreateUpdateDto) -> User:
-    try:
-        return await user_service.create_user(dto)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.patch("/{user_id}", response_model=UserResponseDto)
-async def update_user(user_id: int, dto: UserCreateUpdateDto) -> User:
-    try:
-        return await user_service.update_user(user_id, dto)
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    @router.patch("/{user_id}", response_model=UserResponseDto)
+    async def update_user(self, user_id: int, dto: UserUpdateDto) -> User:
+        try:
+            return await self.service.update_user(user_id, dto)
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
