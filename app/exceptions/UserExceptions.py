@@ -17,3 +17,20 @@ class UserEmailConflictException(HTTPException):
             status_code=status.HTTP_409_CONFLICT,
             detail=f"The email '{email}' is already in use by another user.",
         )
+
+
+class UserNameInvalidException(HTTPException):
+    def __init__(self, name: str):
+        self.name = name
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"The name '{name}' is invalid. It must contain at least a space.",
+        )
+
+
+class PasswordTooLongException(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password is too long, try a shorter one.",
+        )

@@ -14,8 +14,9 @@ POST {{URL}}/users
 Content-Type: application/json
 
 {
-    "name": "John",
-    "email": "john.doe@example.com"
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "securepassword"
 }
 
 ###
@@ -24,5 +25,5 @@ PATCH {{URL}}/users/1
 Content-Type: application/json
 
 {
-    "name": "John Doe"
+    "password": "newsecurepassword"
 }
