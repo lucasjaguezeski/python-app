@@ -13,18 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v8.1.0
-      with:
-        version: "latest"
-
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: "3.12"
-
-    - name: Install dependencies
-      run: uv sync
+    - name: Setup Python environment
+      uses: ./.github/actions/setup-env
 
     - name: Check formatting with ruff
       run: uv run ruff format --check .

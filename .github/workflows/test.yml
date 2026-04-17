@@ -1,4 +1,4 @@
-name: Security Audit
+name: Run Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "master", "release", "develop" ]
 
 jobs:
-  audit:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +16,8 @@ jobs:
     - name: Setup Python environment
       uses: ./.github/actions/setup-env
 
-    - name: Run pip-audit
-      uses: pypa/gh-action-pip-audit@v1.1.0
-      with:
-        virtual-environment: .venv
+    - name: Install project as editable
+      run: uv pip install -e ".[dev]"
+
+    - name: Run tests with pytest
+      run: uv run pytest tests/

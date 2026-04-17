@@ -26,7 +26,7 @@ def patch(obj: T, dto) -> T:
         - Não realiza validação adicional além da já feita pelo dto.
         - Pode sobrescrever atributos com `None` caso estes sejam explicitamente enviados.
     """
-    update_data = dto.dict(exclude_unset=True)
+    update_data = dto.model_dump(exclude_unset=True)
 
     for field, value in update_data.items():
         if hasattr(obj, field):

@@ -1,13 +1,12 @@
-from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
-from fastapi import HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List, Sequence
 
 from app.dtos.UserDtos import UserCreateDto, UserUpdateDto, UserResponseDto
 from app.services.UserService import UserService
 from app.models.User import User
 
-router = InferringRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @cbv(router)
