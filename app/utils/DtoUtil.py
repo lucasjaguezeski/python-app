@@ -4,8 +4,7 @@ T = TypeVar("T")
 
 
 def patch(obj: T, dto) -> T:
-    """
-    Atualiza parcialmente os atributos de um objeto a partir de um dto de entrada.
+    """Atualiza parcialmente os atributos de um objeto a partir de um dto de entrada.
 
     Este método aplica um comportamento equivalente a um PATCH: apenas os campos
     explicitamente definidos no dto são utilizados para atualizar o objeto,

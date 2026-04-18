@@ -1,4 +1,3 @@
-from typing import Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from app.configs.Settings import get_settings
@@ -6,7 +5,7 @@ from app.configs.Settings import get_settings
 
 class MongoManager:
     def __init__(self):
-        self.client: Optional[AsyncIOMotorClient] = None
+        self.client = None
 
     async def connect(self) -> None:
         settings = get_settings()

@@ -6,37 +6,40 @@ A arquitetura foi projetada para focar na **Limpeza de Código e Inversão de Co
 
 ## 🛠 Tecnologias Utilizadas
 
-*   **[FastAPI](https://fastapi.tiangolo.com/):** Framework web de altíssima performance.
-*   **[Uvicorn](https://www.uvicorn.org/):** Servidor ASGI super rápido, agindo como o coração de execução da aplicação.
-*   **[SQLAlchemy 2.0 (Async)](https://www.sqlalchemy.org/):** ORM para bancos de dados operando de forma 100% assíncrona (`asyncpg`).
-*   **[fastapi-utils](https://fastapi-utils.davidmontague.xyz/):** Fornece os utilitários de **Class Based Views (CBV)**, emulando o comportamento de classes e injeção do Spring Boot.
-*   **[Alembic Internals](https://alembic.sqlalchemy.org/):** Ferramenta de migrações instanciada dinamicamente *em memória* para atualização de DDL em tempo real.
-*   **[Beanie](https://beanie-odm.dev/) & [Motor](https://motor.readthedocs.io/):** ODM assíncrono para o MongoDB.
-*   **[Pydantic V2](https://docs.pydantic.dev/):** Validação de dados rigorosa através de Data Transfer Objects (DTOs).
+- **[FastAPI](https://fastapi.tiangolo.com/):** Framework web de altíssima performance.
+- **[Uvicorn](https://www.uvicorn.org/):** Servidor ASGI super rápido, agindo como o coração de execução da aplicação.
+- **[SQLAlchemy 2.0 (Async)](https://www.sqlalchemy.org/):** ORM para bancos de dados operando de forma 100% assíncrona (`asyncpg`).
+- **[fastapi-utils](https://fastapi-utils.davidmontague.xyz/):** Fornece os utilitários de **Class Based Views (CBV)**, emulando o comportamento de classes e injeção do Spring Boot.
+- **[Alembic Internals](https://alembic.sqlalchemy.org/):** Ferramenta de migrações instanciada dinamicamente *em memória* para atualização de DDL em tempo real.
+- **[Beanie](https://beanie-odm.dev/) & [Motor](https://motor.readthedocs.io/):** ODM assíncrono para o MongoDB.
+- **[Pydantic V2](https://docs.pydantic.dev/):** Validação de dados rigorosa através de Data Transfer Objects (DTOs).
 
 ## 📐 Arquitetura
 
 O projeto segue uma padronização madura baseada em **Camadas (Layered Architecture)** com forte inspiração no ecosistema Spring:
 
-1.  **Controllers (`app/controllers`):** Ponto de entrada HTTP utilizando **Class Based Views (`@cbv`)**. Classes injetam `Services` nativamente via `Depends()` e centralizam rotas com `InferringRouter`.
-2.  **Services (`app/services`):** Onde mora toda a Regra de Negócio. Totalmente isoladas da camada HTTP.
-3.  **Repositories (`app/repositories`):** Camada de dados responsável pelas queries no SQLAlchemy recuperando a sessão ativa magicamente do `ContextVar`.
-4.  **DTOs (`app/dtos`):** Objetos de Transferência de Dados (`Pydantic Models`).
-5.  **Models (`app/models`):** Modelos `DeclarativeBase` mesclados com Dataclasses baseados em chaves nomeadas.
+1. **Controllers (`app/controllers`):** Ponto de entrada HTTP utilizando **Class Based Views (`@cbv`)**. Classes injetam `Services` nativamente via `Depends()` e centralizam rotas com `InferringRouter`.
+1. **Services (`app/services`):** Onde mora toda a Regra de Negócio. Totalmente isoladas da camada HTTP.
+1. **Repositories (`app/repositories`):** Camada de dados responsável pelas queries no SQLAlchemy recuperando a sessão ativa magicamente do `ContextVar`.
+1. **DTOs (`app/dtos`):** Objetos de Transferência de Dados (`Pydantic Models`).
+1. **Models (`app/models`):** Modelos `DeclarativeBase` mesclados com Dataclasses baseados em chaves nomeadas.
 
 ### ✨ Destaques de Arquitetura
-*   **Emulação `hibernate.hbm2ddl.auto`:** Atualizações de banco de dados (`ADD COLUMN`, `CREATE TABLE`) feitas automaticamente em tempo de execução durante o `lifespan` do FastAPI. Nenhum arquivo físico `.py` de migração é gerado. Alterou o modelo, o banco atualiza na inicialização.
-*   **Gerenciamento de Transação Automático via Middleware:** Um *Middleware* intercepta a requisição, abre a sessão no banco, armazena num `ContextVar` e, ao fim, executa commit ou rollback automaticamente.
-*   **Roteamento Centralizado (Explicit Routing):** Padrão canônico do FastAPI usando `__init__.py` dentro de `app/controllers` para agregar os `APIRoutes` limpos, garantindo facilidade de rastreio na IDE (Ctrl+Click).
+
+- **Emulação `hibernate.hbm2ddl.auto`:** Atualizações de banco de dados (`ADD COLUMN`, `CREATE TABLE`) feitas automaticamente em tempo de execução durante o `lifespan` do FastAPI. Nenhum arquivo físico `.py` de migração é gerado. Alterou o modelo, o banco atualiza na inicialização.
+- **Gerenciamento de Transação Automático via Middleware:** Um *Middleware* intercepta a requisição, abre a sessão no banco, armazena num `ContextVar` e, ao fim, executa commit ou rollback automaticamente.
+- **Roteamento Centralizado (Explicit Routing):** Padrão canônico do FastAPI usando `__init__.py` dentro de `app/controllers` para agregar os `APIRoutes` limpos, garantindo facilidade de rastreio na IDE (Ctrl+Click).
 
 ## ⚙️ Como Executar o Projeto
 
 ### Pré-requisitos
-*   [Python 3.10+](https://www.python.org/)
-*   [uv](https://github.com/astral-sh/uv) (Recomendado como gerenciador de pacotes)
-*   Bancos de dados rodando (PostgreSQL e MongoDB)
+
+- [Python 3.10+](https://www.python.org/)
+- [uv](https://github.com/astral-sh/uv) (Recomendado como gerenciador de pacotes)
+- Bancos de dados rodando (PostgreSQL e MongoDB)
 
 ### 1. Variáveis de Ambiente
+
 Crie um arquivo `.env` na raiz do projeto e configure as conexões baseadas na classe `Settings`:
 
 ```env
@@ -62,11 +65,13 @@ MONGO_DB_NAME=logs_db
 ### 2. Instalação das Dependências
 
 Usando `uv` (muito mais rápido):
+
 ```bash
-uv sync 
+uv sync
 ```
 
 ### 3. Rodando a Aplicação
+
 Execute o servidor Uvicorn com hot-reload ativo para desenvolvimento:
 
 ```bash

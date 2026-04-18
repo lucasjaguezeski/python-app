@@ -1,6 +1,7 @@
 from fastapi_utils.cbv import cbv
 from fastapi import APIRouter, HTTPException, status, Depends
-from typing import List, Sequence
+
+from collections.abc import Sequence
 
 from app.dtos.UserDtos import UserCreateDto, UserUpdateDto, UserResponseDto
 from app.services.UserService import UserService
@@ -17,7 +18,7 @@ class UserController:
     async def get_user(self, user_id: int) -> User:
         return await self.service.find_by_id(user_id)
 
-    @router.get("/", response_model=List[UserResponseDto])
+    @router.get("/", response_model=list[UserResponseDto])
     async def list_users(self) -> Sequence[User]:
         return await self.service.list_users()
 

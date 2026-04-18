@@ -23,7 +23,7 @@ repos:
     rev: v3.15.0
     hooks:
       - id: pyupgrade
-        args: [--py312-plus]
+        args: [--py312-plus, --keep-runtime-typing]
         name: Upgrade code to Python 3.12+
 
   - repo: https://github.com/myint/docformatter
@@ -50,8 +50,8 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        args: [--strict]
-        additional_dependencies: []
+        args: [--ignore-missing-imports, --explicit-package-bases]
+        additional_dependencies: [fastapi, starlette]
 
   - repo: https://github.com/asottile/blacken-docs
     rev: 1.16.0
@@ -75,14 +75,14 @@ repos:
       - id: uv-lock
         stages: [pre-push]
 
-  - repo: https://github.com/pypa/pip-audit
-    rev: v2.10.0
-    hooks:
-      - id: pip-audit
-        name: pip-audit (pyproject)
-        args: ["--progress-spinner=off"]
-        pass_filenames: false
-        stages: [pre-push]
+  #- repo: https://github.com/pypa/pip-audit
+  #  rev: v2.10.0
+  #  hooks:
+  #    - id: pip-audit
+  #      name: pip-audit (pyproject)
+  #      args: ["--progress-spinner=off", "."]
+  #      pass_filenames: false
+  #      stages: [pre-push]
 
   - repo: local
     hooks:

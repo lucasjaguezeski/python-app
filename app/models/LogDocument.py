@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
-from typing import Optional, Any, Dict
-from beanie import Document
+from typing import Any, Annotated
+from beanie import Document, Indexed
 from pydantic import Field
 from enum import Enum
 
@@ -14,15 +14,16 @@ class LogLevel(str, Enum):
 
 
 class LogDocument(Document):
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    level: LogLevel = LogLevel.INFO
-    message: str
-    endpoint: Optional[str] = None
-    method: Optional[str] = None
-    status_code: Optional[int] = None
-    response_time_ms: Optional[float] = None
-    metadata: Optional[Dict[str, Any]] = None
+    timestamp: Annotated[
+        datetime, Indexed, Field(default_factory=lambda: datetime.now(timezone.utc))
+    ]
+    level: Annotated[LogLevel, Indexed] = LogLevel.INFO
+    message: Annotated[str, Field(description="The log message content")]
+    endpoint: Annotated[str | None, Indexed] = None
+    method: Annotated[
+        str | None, Field(description="HTTP method (e.g., GET, POST)")
+    ] = None
+    metadata: Annotated[dict[str, Any] | None, Field(default=None)] = None
 
     class Settings:
         name = "app_logs"
-        indexes = ["timestamp", "level", "endpoint"]

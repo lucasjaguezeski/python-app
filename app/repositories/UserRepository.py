@@ -29,6 +29,9 @@ class UserRepository:
         return user
 
     async def delete(self, user: User) -> None:
-        """Função de exemplo, não usar em produção. Em produção, marcar como inativo é mais recomendado."""
+        """Função de exemplo, não usar em produção.
+
+        Em produção, marcar como inativo é mais recomendado.
+        """
         await self.db.delete(user)
         await self.db.commit()

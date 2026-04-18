@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.pool import StaticPool
 from fastapi import FastAPI, Request
 
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 from app.controllers.UserController import router
 from app.configs.Database import Base, db_session_context
 

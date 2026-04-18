@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr, field_validator, ConfigDict
-from typing import Optional
+from pydantic import BaseModel, EmailStr, field_validator, ConfigDict, Field
+from typing import Annotated
 
 from app.exceptions.UserExceptions import (
     UserNameInvalidException,
@@ -8,9 +8,11 @@ from app.exceptions.UserExceptions import (
 
 
 class UserCreateDto(BaseModel):
-    name: str
-    email: EmailStr
-    password: str
+    name: Annotated[str, Field(min_length=2, max_length=30, examples=["John Doe"])]
+    email: Annotated[EmailStr, Field(examples=["user@example.com"])]
+    password: Annotated[
+        str, Field(min_length=6, max_length=72, examples=["S3cur3P@ssw0rd"])
+    ]
 
     @field_validator("password")
     @classmethod
@@ -28,9 +30,14 @@ class UserCreateDto(BaseModel):
 
 
 class UserUpdateDto(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    active: Optional[bool] = None
+    name: Annotated[
+        str | None,
+        Field(min_length=2, max_length=30, examples=["John Doe"], default=None),
+    ]
+    email: Annotated[
+        EmailStr | None, Field(examples=["user@example.com"], default=None)
+    ]
+    active: Annotated[bool | None, Field(examples=[True], default=None)]
 
     @field_validator("name")
     @classmethod
@@ -41,9 +48,9 @@ class UserUpdateDto(BaseModel):
 
 
 class UserResponseDto(BaseModel):
-    id: int
-    active: bool
-    name: Optional[str]
-    email: EmailStr
+    id: Annotated[int, Field(examples=[1])]
+    active: Annotated[bool, Field(examples=[True])]
+    name: Annotated[str | None, Field(examples=["John Doe"], default=None)]
+    email: Annotated[EmailStr, Field(examples=["user@example.com"])]
 
     model_config = ConfigDict(from_attributes=True)
