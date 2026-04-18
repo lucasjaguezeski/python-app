@@ -1,0 +1,95 @@
+default_language_version:
+  python: python3.12
+
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-case-conflict
+      - id: check-added-large-files
+        exclude: ^(.*\/dummy.*|.*\.json)$
+        args: ["--maxkb=750", "--enforce-all"]
+      - id: detect-private-key
+      - id: check-merge-conflict
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        args: [--py312-plus]
+        name: Upgrade code to Python 3.12+
+
+  - repo: https://github.com/myint/docformatter
+    rev: v1.7.7
+    hooks:
+      - id: docformatter
+        args: [--in-place, --wrap-summaries=115, --wrap-descriptions=120]
+
+  - repo: https://github.com/asottile/yesqa
+    rev: v1.5.0
+    hooks:
+      - id: yesqa
+        name: Unused noqa
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.18.2
+    hooks:
+      - id: mypy
+        name: mypy
+        args: [--strict]
+        additional_dependencies: []
+
+  - repo: https://github.com/asottile/blacken-docs
+    rev: 1.16.0
+    hooks:
+      - id: blacken-docs
+        args: [--line-length=120]
+        additional_dependencies: [black==22.1.0]
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat_frontmatter
+        exclude: CHANGELOG.md
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.7
+    hooks:
+      - id: uv-lock
+        stages: [pre-push]
+
+  - repo: https://github.com/pypa/pip-audit
+    rev: v2.10.0
+    hooks:
+      - id: pip-audit
+        name: pip-audit (pyproject)
+        args: ["--progress-spinner=off"]
+        pass_filenames: false
+        stages: [pre-push]
+
+  - repo: local
+    hooks:
+      - id: unit_test
+        name: Unit tests
+        language: system
+        entry: uv run pytest
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
