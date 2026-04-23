@@ -19,3 +19,4 @@ wheels/
 
 # Environment variables
 .env
+.env.prod

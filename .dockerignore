@@ -1,0 +1,23 @@
+.git
+.github
+.venv
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.pyc
+*.pyo
+*.pyd
+*.log
+tests
+dist
+build
+*.egg-info
+.env
+.env.*
+!.env.example
+
+# Keep only runtime docker assets required by Dockerfile
+Dockerfile
+docker/docker-compose.yml
+docker/.env.production.example

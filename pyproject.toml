@@ -19,6 +19,19 @@ dependencies = [
     "uvicorn>=0.44.0",
 ]
 
+[project.scripts]
+app = "app:run"
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
 [project.optional-dependencies]
 dev = [
     "aiosqlite>=0.22.1",
