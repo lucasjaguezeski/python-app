@@ -3,6 +3,21 @@ from functools import lru_cache
 from enum import Enum
 
 
+class AppEnvironment(str, Enum):
+    LOCAL = "local"
+    DEV = "development"
+    RELEASE = "release"
+    PROD = "production"
+
+
+class LogLevel(str, Enum):
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    DEBUG = "DEBUG"
+    CRITICAL = "CRITICAL"
+
+
 class DDLAutoOption(str, Enum):
     UPDATE = "update"
     CREATE = "create"
@@ -15,11 +30,14 @@ class Settings(BaseSettings):
     )
 
     # Configurações gerais da aplicação
-    APP_ENV: str = "development"
+    APP_ENV: AppEnvironment = AppEnvironment.LOCAL
     APP_VERSION: str = "1.0.0"
-    LOG_LEVEL: str = "INFO"
+    LOG_LEVEL: LogLevel = LogLevel.INFO
     UVICORN_HOST: str = "0.0.0.0"
     UVICORN_PORT: int = 8000
+    UVICORN_WORKERS: int = 4
+    UVICORN_TIMEOUT_KEEP_ALIVE: int = 5
+    PROXY_HEADERS: bool = True
 
     # Configurações do banco de dados PostgreSQL
     @property

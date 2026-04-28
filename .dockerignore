@@ -10,7 +10,6 @@ __pycache__
 *.pyd
 *.log
 tests
-dist
 build
 *.egg-info
 .env

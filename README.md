@@ -43,23 +43,35 @@ O projeto segue uma padronização madura baseada em **Camadas (Layered Architec
 Crie um arquivo `.env` na raiz do projeto e configure as conexões baseadas na classe `Settings`:
 
 ```env
-APP_ENV=development
+# App
+APP_ENV=local
+APP_VERSION=1.0.0
+UVICORN_WORKERS=4
+UVICORN_HOST=0.0.0.0
+UVICORN_PORT=5000
+LOG_LEVEL=INFO
 
-# Postgres
-DB_URL=postgresql+asyncpg://seu_usuario:sua_senha@localhost:5432/seu_banco
-DB_POOL_SIZE=10
-DB_MAX_OVERFLOW=20
-DB_ECHO=True
+# Database
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+DB_HOST=seu_host
+DB_PORT=5432
+DB_NAME=seu_banco
+
+DB_POOL_SIZE=20
+DB_MAX_OVERFLOW=40
+DB_ECHO=False
 DB_POOL_PRE_PING=True
 
-# DDL Auto (Emulador Mapeamento JPA)
-# Opções: create, update, none
 ALEMBIC_DDL_AUTO=update
 
-# MongoDB (Logs)
-ENABLE_MONGO_LOGS=True
-MONGODB_URL=mongodb://localhost:27017
+# MongoDB
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=replace_with_strong_mongo_password
 MONGO_DB_NAME=logs_db
+MONGO_TIMEOUT_MS=5000
+ENABLE_MONGO_LOGS=False
+MONGODB_URL=mongodb://admin:replace_with_strong_mongo_password@mongodb:27017/?authSource=admin
 ```
 
 ### 2. Instalação das Dependências
@@ -70,16 +82,42 @@ Usando `uv` (muito mais rápido):
 uv sync
 ```
 
-### 3. Rodando a Aplicação
-
-Execute o servidor Uvicorn com hot-reload ativo para desenvolvimento:
+Como o projeto utiliza o `pre-commit` para assegurar a qualidade do código (formatação, linting, checagens estáticas), ative os hooks locais antes de começar a trabalhar:
 
 ```bash
-uv run uvicorn app.main:app --reload
+uv run pre-commit install
+```
+
+### 3. Rodando a Aplicação
+
+O projeto possui um entrypoint limpo e age como um módulo Python fechado. Você pode iniciar o servidor de duas formas:
+
+Executando o módulo `app` (repassando para o `__main__.py`):
+
+```bash
+uv run python -m app
+```
+
+Ou através do comando nativo gerado pelo pacote UV:
+
+```bash
+uv run app
 ```
 
 Acesse a documentação interativa oficial (Swagger UI) gerada automaticamente na rota:
 **http://localhost:8000/docs**
+
+### 4. Rodando no Docker (Produção)
+
+A aplicação conta com um ambiente robusto utilizando contêineres de produção (*non-root user*, `tini`, limites e configs).
+
+```bash
+# Build e execução convencional da API + DB
+./docker/run.sh
+
+# Build e execução utizando pacotes otimizados em modo Wheel (.whl), estilo empacotamento "Java .jar"
+./docker/run.sh --wheel
+```
 
 ## 📁 Estrutura de Pastas
 
@@ -93,8 +131,10 @@ Acesse a documentação interativa oficial (Swagger UI) gerada automaticamente n
 │   ├── repositories/     # Padrão Repository interagindo com ContextVars
 │   ├── services/         # Lógica de Negócios Centralizada
 │   ├── utils/            # Ferramentas auxiliares (ex: Patch de DTOs)
-│   └── main.py           # Entrypoint super limpo (inclui routes e middlewares)
-├── pyproject.toml        # Configuração de pacotes
+│   ├── __init__.py       # Fastapi limpo (Declaração de contexto, Middleware, Roteador)
+│   └── __main__.py       # Entrypoint executável que chama o uvicorn nativamente
+├── docker/               # Configurações para Docker (Compose, Multi-stage e .whl builds)
+├── pyproject.toml        # Configuração de pacotes e entrada de compilação
 ├── requirements.txt      # Dependências exportadas
 └── .env                  # Variáveis de ambiente secretas
 ```

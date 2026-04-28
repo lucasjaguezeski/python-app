@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.scripts]
-app = "app:run"
+app = "app.__main__:run"
 
 [tool.uv]
 package = true

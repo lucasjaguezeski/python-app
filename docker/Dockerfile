@@ -38,4 +38,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 --start-period=25s CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.getenv(\"UVICORN_PORT\", \"8000\")}/docs', timeout=2)"
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["sh", "-c", "uvicorn app:app --host ${UVICORN_HOST:-0.0.0.0} --port ${UVICORN_PORT:-8000} --workers ${UVICORN_WORKERS:-4} --proxy-headers --timeout-keep-alive ${UVICORN_TIMEOUT_KEEP_ALIVE:-5} --log-level ${UVICORN_LOG_LEVEL:-info}"]
+CMD ["python", "-m", "app"]
